@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #0e0b08;
+  --foreground: #fff8f0;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(245,158,11,0.22); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(245,158,11,0.42); }
+}
+
+/* ── Film grain overlay ── */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+
+/* ── Ambient orb drift ── */
+@keyframes orb-drift-1 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.65; }
+  35%  { transform: translate(30px, -20px); opacity: 0.85; }
+  70%  { transform: translate(-14px, 16px); opacity: 0.7; }
+}
+@keyframes orb-drift-2 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.5; }
+  42%  { transform: translate(-24px, 20px); opacity: 0.72; }
+  78%  { transform: translate(20px, -12px); opacity: 0.56; }
+}
+.ambient-orb-1 { animation: orb-drift-1 14s ease-in-out infinite; }
+.ambient-orb-2 { animation: orb-drift-2 18s ease-in-out infinite; }
+
+/* ── Staggered fade-up entrance ── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.anim-0 { animation: fade-in-up 0.65s cubic-bezier(0.16,1,0.3,1) 0.00s both; }
+.anim-1 { animation: fade-in-up 0.65s cubic-bezier(0.16,1,0.3,1) 0.10s both; }
+.anim-2 { animation: fade-in-up 0.65s cubic-bezier(0.16,1,0.3,1) 0.22s both; }
+.anim-3 { animation: fade-in-up 0.65s cubic-bezier(0.16,1,0.3,1) 0.36s both; }
+.anim-4 { animation: fade-in-up 0.65s cubic-bezier(0.16,1,0.3,1) 0.50s both; }
+.anim-5 { animation: fade-in-up 0.65s cubic-bezier(0.16,1,0.3,1) 0.65s both; }
+
+/* ── Glass cards ── */
+.glass-card {
+  background: rgba(255,175,50,0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(245,158,11,0.16);
+  box-shadow: 0 1px 1px rgba(255,200,100,0.05) inset, 0 24px 48px rgba(0,0,0,0.45);
+  position: relative;
+  overflow: hidden;
+}
+.glass-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.32), transparent);
+  pointer-events: none;
+}
+
+.glass-card-neutral {
+  background: rgba(120,113,108,0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(120,113,108,0.18);
+  box-shadow: 0 1px 1px rgba(255,255,255,0.03) inset, 0 24px 48px rgba(0,0,0,0.45);
+  position: relative;
+  overflow: hidden;
+}
+.glass-card-neutral::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+}
+
+/* ── Pill badge ── */
+.pp-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(252,211,77,0.82);
+  padding: 0.2rem 0.7rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(245,158,11,0.28);
+  background: rgba(245,158,11,0.08);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Status badges ── */
+.s-badge {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.22rem 0.65rem;
+  border-radius: 9999px;
+  display: inline-block;
+}
+.s-pending   { background: rgba(234,179,8,0.12);  color: #FCD34D; border: 1px solid rgba(234,179,8,0.25); }
+.s-preparing { background: rgba(59,130,246,0.12); color: #93C5FD; border: 1px solid rgba(59,130,246,0.25); }
+.s-ready     { background: rgba(34,197,94,0.12);  color: #86EFAC; border: 1px solid rgba(34,197,94,0.25); }
+.s-completed { background: rgba(120,113,108,0.15);color: #A8A29E; border: 1px solid rgba(120,113,108,0.25); }
+.s-cancelled { background: rgba(239,68,68,0.12);  color: #FCA5A5; border: 1px solid rgba(239,68,68,0.25); }
+.s-confirmed { background: rgba(34,197,94,0.12);  color: #86EFAC; border: 1px solid rgba(34,197,94,0.25); }
+
+/* ── Warm divider ── */
+.warm-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(245,158,11,0.32), transparent);
+}
+
+/* ── Input styles ── */
+.pp-input {
+  width: 100%;
+  background: rgba(255,175,50,0.04);
+  border: 1px solid rgba(245,158,11,0.16);
+  color: #fff8f0;
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.pp-input::placeholder { color: rgba(255,240,210,0.28); }
+.pp-input:focus { border-color: rgba(245,158,11,0.5); }
+
+/* ── Buttons ── */
+.pp-btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, #F59E0B, #F97316);
+  color: #1a0f00;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.78rem 1.5rem;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.pp-btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.pp-btn-primary:disabled { opacity: 0.45; transform: none; cursor: not-allowed; }
+
+.pp-btn-ghost {
+  background: transparent;
+  color: rgba(255,240,210,0.5);
+  font-size: 0.85rem;
+  padding: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.pp-btn-ghost:hover { color: rgba(255,240,210,0.85); }
