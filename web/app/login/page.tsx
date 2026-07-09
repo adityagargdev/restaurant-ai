@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
@@ -17,6 +17,15 @@ export default function CustomerLogin() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlError = params.get("error");
+    const urlDetails = params.get("details");
+    if (urlError) {
+      setError(`Auth error: ${urlError}${urlDetails ? ` — ${urlDetails}` : ""}`);
+    }
+  }, []);
 
   async function handleGoogleLogin() {
     setLoading(true);
