@@ -248,8 +248,11 @@ async def entrypoint(ctx: JobContext):
         # Fallback: SIP participant attributes
         if not caller_phone:
             attrs = dict(participant.attributes) if participant.attributes else {}
+            print(f"[CALL] SIP attributes: {attrs}")
             caller_phone = (
                 attrs.get("sip.h.x-caller-phone")
+                or attrs.get("sip.h.X-Caller-Phone")
+                or attrs.get("sip.h.X-caller-phone")
                 or attrs.get("sip.callTo")
                 or attrs.get("sip.phoneNumber")
                 or attrs.get("sip.callFrom")
