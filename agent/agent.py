@@ -249,7 +249,8 @@ async def entrypoint(ctx: JobContext):
         if not caller_phone:
             attrs = dict(participant.attributes) if participant.attributes else {}
             caller_phone = (
-                attrs.get("sip.callTo")
+                attrs.get("sip.h.x-caller-phone")
+                or attrs.get("sip.callTo")
                 or attrs.get("sip.phoneNumber")
                 or attrs.get("sip.callFrom")
                 or ""
@@ -279,7 +280,7 @@ async def entrypoint(ctx: JobContext):
         ),
         vad=silero.VAD.load(
             sample_rate=8000,
-            min_silence_duration=0.2,
+            min_silence_duration=0.4,
             min_speech_duration=0.05,
         ),
         allow_interruptions=True,
