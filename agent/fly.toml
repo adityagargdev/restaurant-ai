@@ -1,0 +1,9 @@
+app = "pepper-pine-agent"
+primary_region = "sin"
+
+[build]
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

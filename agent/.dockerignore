@@ -1,0 +1,6 @@
+.env
+.caller_phone
+__pycache__
+*.pyc
+*.pyo
+.git
