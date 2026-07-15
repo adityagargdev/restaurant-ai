@@ -248,16 +248,29 @@ async def entrypoint(ctx: JobContext):
         # Fallback: SIP participant attributes
         if not caller_phone:
             attrs = dict(participant.attributes) if participant.attributes else {}
-            print(f"[CALL] SIP attributes: {attrs}")
-            caller_phone = (
-                attrs.get("sip.h.x-caller-phone")
-                or attrs.get("sip.h.X-Caller-Phone")
-                or attrs.get("sip.h.X-caller-phone")
-                or attrs.get("sip.callTo")
-                or attrs.get("sip.phoneNumber")
-                or attrs.get("sip.callFrom")
-                or ""
-            )
+            twilio_number = os.getenv("TWILIO_PHONE_NUMBER", "")
+            call_sid = attrs.get("sip.twilio.callSid")
+            if call_sid:
+                try:
+                    import httpx
+                    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+                    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+                    async with httpx.AsyncClient() as client:
+                        resp = await client.get(
+                            f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Calls/{call_sid}.json",
+                            auth=(account_sid, auth_token),
+                        )
+                        data = resp.json()
+                    to_num = data.get("to", "")
+                    from_num = data.get("from", "")
+                    # call_me.py: Twilio calls user's phone (to=user), from=Twilio number
+                    # Real inbound: caller calls Twilio (to=Twilio number), from=caller
+                    caller_phone = to_num if to_num != twilio_number else from_num
+                    print(f"[CALL] Twilio call lookup — to={to_num} from={from_num} → using {caller_phone}")
+                except Exception as e:
+                    print(f"[CALL] Twilio lookup failed: {e}")
+            if not caller_phone:
+                caller_phone = attrs.get("sip.phoneNumber") or ""
 
         print(f"[CALL] SIP call — caller_phone: {caller_phone or 'unknown'}")
     else:
