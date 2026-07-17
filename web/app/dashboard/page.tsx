@@ -262,6 +262,7 @@ export default function CustomerDashboard() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"orders" | "reservations" | "menu">("orders");
+  const [showPhone, setShowPhone] = useState(false);
 
   const fetchData = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -352,20 +353,42 @@ export default function CustomerDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2.5">
-          <a
-            href="tel:+18782849168"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 hover:-translate-y-px"
-            style={{
-              background: "linear-gradient(135deg, #F59E0B, #F97316)",
-              color: "#1a0f00",
-              textDecoration: "none",
-            }}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.46-.46a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21 16.92z" />
-            </svg>
-            Call Us
-          </a>
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setShowPhone(v => !v)}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 hover:-translate-y-px"
+              style={{
+                background: "linear-gradient(135deg, #F59E0B, #F97316)",
+                color: "#1a0f00",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.46-.46a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21 16.92z" />
+              </svg>
+              Call Us
+            </button>
+            {showPhone && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "calc(100% + 8px)",
+                  right: 0,
+                  background: "#1a0f00",
+                  border: "1px solid rgba(245,158,11,0.3)",
+                  borderRadius: "12px",
+                  padding: "12px 16px",
+                  whiteSpace: "nowrap",
+                  zIndex: 50,
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+                }}
+              >
+                <p style={{ color: "#F59E0B", fontSize: "0.75rem", marginBottom: "4px" }}>Call us to reserve a table or place an order</p>
+                <p style={{ color: "#fff8f0", fontSize: "1rem", fontWeight: 600, letterSpacing: "0.03em" }}>+1 (878) 284-9168</p>
+              </div>
+            )}
+          </div>
           <button
             onClick={handleSignOut}
             style={{ color: "rgba(255,240,210,0.32)", fontSize: "0.8rem", background: "none", border: "none", cursor: "pointer", transition: "color 0.2s" }}

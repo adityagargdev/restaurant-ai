@@ -12,9 +12,9 @@ from twilio.rest import Client
 
 load_dotenv()
 
-MY_NUMBER     = "+919999004907"
+MY_NUMBER     = "+919599275007"
 TWILIO_NUMBER = os.environ["TWILIO_PHONE_NUMBER"]
-LIVEKIT_SIP_URI = "sip:4hpz5eqtgpm.sip.livekit.cloud"
+LIVEKIT_SIP_URI = "sip:+18782849168@4hpz5eqtgpm.sip.livekit.cloud"
 
 CALLER_FILE = os.path.join(os.path.dirname(__file__), ".caller_phone")
 
@@ -26,7 +26,11 @@ def main():
     print(f"📋  Caller phone saved: {MY_NUMBER}")
 
     client = Client(os.environ["TWILIO_ACCOUNT_SID"], os.environ["TWILIO_AUTH_TOKEN"])
-    twiml = f"<Response><Dial><Sip>{LIVEKIT_SIP_URI}</Sip></Dial></Response>"
+    twiml = (
+        f'<Response><Dial><Sip>{LIVEKIT_SIP_URI}'
+        f'<SipHeader name="X-Caller-Phone" value="{MY_NUMBER}"/>'
+        f'</Sip></Dial></Response>'
+    )
 
     print(f"📞  Calling {MY_NUMBER} ...")
     call = client.calls.create(to=MY_NUMBER, from_=TWILIO_NUMBER, twiml=twiml)
