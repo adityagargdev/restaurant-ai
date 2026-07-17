@@ -268,20 +268,27 @@ export default function CustomerDashboard() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
 
-    const { data: profile } = await supabase.from("profiles").select("name").eq("id", user.id).single();
+    const { data: profile } = await supabase.from("profiles").select("name, phone").eq("id", user.id).single();
     setUserName(profile?.name ?? "Guest");
 
+    const phone = profile?.phone;
+    const ordersFilter = phone
+      ? `user_id.eq.${user.id},caller_phone.eq.${phone}`
+      : `user_id.eq.${user.id}`;
     const { data: ordersData } = await supabase
       .from("orders")
       .select("*, order_items(item_name, variant, quantity, unit_price)")
-      .eq("user_id", user.id)
+      .or(ordersFilter)
       .order("created_at", { ascending: false });
     setOrders(ordersData ?? []);
 
+    const resFilter = phone
+      ? `user_id.eq.${user.id},caller_phone.eq.${phone}`
+      : `user_id.eq.${user.id}`;
     const { data: resData } = await supabase
       .from("reservations")
       .select("*, restaurant_tables(type, is_rooftop, table_number)")
-      .eq("user_id", user.id)
+      .or(resFilter)
       .order("date", { ascending: false });
     setReservations(resData ?? []);
 
