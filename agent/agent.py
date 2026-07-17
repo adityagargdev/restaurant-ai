@@ -283,7 +283,7 @@ async def entrypoint(ctx: JobContext):
     session = AgentSession(
         stt=deepgram.STT(model=stt_model, language="en"),
         llm=lk_openai.LLM(
-            model="llama-3.3-70b-versatile",
+            model="llama3-groq-70b-8192-tool-use-preview",
             base_url="https://api.groq.com/openai/v1",
             api_key=os.getenv("GROQ_API_KEY"),
         ),
