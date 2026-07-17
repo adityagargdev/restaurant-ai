@@ -263,9 +263,14 @@ async def entrypoint(ctx: JobContext):
                         data = resp.json()
                     to_num = data.get("to", "")
                     from_num = data.get("from", "")
-                    # call_me.py: Twilio calls user's phone (to=user), from=Twilio number
-                    # Real inbound: caller calls Twilio (to=Twilio number), from=caller
-                    caller_phone = to_num if to_num != twilio_number else from_num
+                    # Pick whichever leg looks like a real phone number (+E.164).
+                    # For inbound calls via TwiML Bin, to_num is a SIP URI (sip:pepperpine@...)
+                    # so we must fall back to from_num (the actual caller).
+                    # For call_me.py, to_num is the user's +91 number and from_num is Twilio.
+                    if to_num.startswith("+") and to_num != twilio_number:
+                        caller_phone = to_num
+                    else:
+                        caller_phone = from_num
                     print(f"[CALL] Twilio call lookup — to={to_num} from={from_num} → using {caller_phone}")
                 except Exception as e:
                     print(f"[CALL] Twilio lookup failed: {e}")
@@ -283,7 +288,7 @@ async def entrypoint(ctx: JobContext):
     session = AgentSession(
         stt=deepgram.STT(model=stt_model, language="en"),
         llm=lk_openai.LLM(
-            model="llama3-groq-70b-8192-tool-use-preview",
+            model="llama-3.3-70b-versatile",
             base_url="https://api.groq.com/openai/v1",
             api_key=os.getenv("GROQ_API_KEY"),
         ),
